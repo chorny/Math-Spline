@@ -1,10 +1,13 @@
 package Math::Spline;
-require Exporter;
-@ISA=qw(Exporter);
-@EXPORT_OK=qw(linsearch binsearch spline);
+use 5.006;
+use strict;
+use warnings;
+use Exporter 'import';
+#require Exporter;
+#@ISA=qw(Exporter);
+our @EXPORT_OK=qw(linsearch binsearch spline);
 use Carp;
 use Math::Derivative qw(Derivative2);
-use strict;
 
 sub new {
   my $type=shift;
