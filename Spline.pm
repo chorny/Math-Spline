@@ -111,7 +111,7 @@ requires Math::Derivative module
     require Math::Spline;
     my @x=(1,3,8,10);
     my @y=(1,2,3,4);						    
-    $spline=new Math::Spline(\@x,\@y);
+    $spline = Math::Spline->new(\@x,\@y);
     print $spline->evaluate(5)."\n";
 
 produces the output
