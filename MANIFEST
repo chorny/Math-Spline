@@ -3,3 +3,4 @@ README
 Release
 Makefile.PL
 Spline.pm
+t/00-load.t
