@@ -64,8 +64,8 @@ __END__
 
 =head1 SYNOPSIS
 
-    require Math::Spline;
-    $spline=new Math::Spline(\@x,\@y)
+    use Math::Spline;
+    $spline = Math::Spline->new(\@x,\@y)
     $y_interp=$spline->evaluate($x);
 
     use Math::Spline qw(spline linsearch binsearch);
