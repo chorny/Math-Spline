@@ -1,10 +1,66 @@
-# $Id: Spline.pm,v 1.1 1995/12/26 17:28:17 willijar Exp $
+package Math::Spline;
+require Exporter;
+@ISA=qw(Exporter);
+@EXPORT_OK=qw(linsearch binsearch spline);
+use Carp;
+use Math::Derivative qw(Derivative2);
+use strict;
+
+sub new {
+  my $type=shift;
+  my $self=[];
+  push @{$self},shift; # x
+  push @{$self},shift; # y
+  my $y2=[Derivative2($self->[0],$self->[1])];
+  push @{$self},$y2;
+  bless $self,$type;
+}
+
+sub evaluate {
+  my ($self,$v)=@_;
+  my $idx=binsearch($self->[0],$v);
+  spline($self->[0],$self->[1],$self->[2],$idx,$v);
+}
+
+sub spline { 
+  my ($x,$y,$y2,$i,$v)=@_;
+  my ($klo,$khi)=($i,$i+1);
+  my $h=$x->[$khi]-$x->[$klo];
+  if ($h==0) { croak "Zero interval in spline data.\n"; }
+  my $a=($x->[$khi]-$v)/$h;
+  my $b=($v-$x->[$klo])/$h;
+  return $a*$y->[$klo] + $b*$y->[$khi]
+      +(($a*$a*$a-$a)*$y2->[$klo]
+	+($b*$b*$b-$b)*$y2->[$khi])*($h*$h)/6.0;
+}
+
+sub binsearch { # binary search routine finds index just below value
+  my ($x,$v)=@_;
+  my ($klo,$khi)=(0,$#{$x});
+  my $k;
+  while (($khi-$klo)>1) {
+    $k=int(($khi+$klo)/2);
+    if ($x->[$k]>$v) { $khi=$k; } else { $klo=$k; }
+  }
+  return $klo;
+}
+
+sub linsearch { # more efficient if repetatively doint it
+  my ($x,$v,$khi)=@_; $khi+=1;
+  my $n=$#{$x};
+  while($v>$x->[$khi] and $khi<$n) { $khi++; }
+  $_[2]=$khi-1;
+}
+
+1;
+
+__END__
 =head1 NAME
 
     Math::Spline  - Cubic Spline Interpolation of data
 
 =head1 SYNOPSIS
-    
+
     require Math::Spline;
     $spline=new Math::Spline(\@x,\@y)
     $y_interp=$spline->evaluate($x);
@@ -80,60 +136,3 @@ W.H. Press, B.P. Flannery, S.A. Teukolsky, W.T. Vetterling.
 Cambridge University Press. ISBN 0 521 30811 9.
 
 =cut
-
-require Exporter;
-package Math::Spline;
-@ISA=qw(Exporter);
-@EXPORT_OK=qw(linsearch binsearch spline);
-use Carp;
-use Math::Derivative qw(Derivative2);
-use strict;
-
-sub new {
-  my $type=shift;
-  my $self=[];
-  push @{$self},shift; # x
-  push @{$self},shift; # y
-  my $y2=[Derivative2($self->[0],$self->[1])];
-  push @{$self},$y2;
-  bless $self,$type;
-}
-
-sub evaluate {
-  my ($self,$v)=@_;
-  my $idx=binsearch($self->[0],$v);
-  spline($self->[0],$self->[1],$self->[2],$idx,$v);
-}
-
-sub spline { 
-  my ($x,$y,$y2,$i,$v)=@_;
-  my ($klo,$khi)=($i,$i+1);
-  my $h=$x->[$khi]-$x->[$klo];
-  if ($h==0) { croak "Zero interval in spline data.\n"; }
-  my $a=($x->[$khi]-$v)/$h;
-  my $b=($v-$x->[$klo])/$h;
-  return $a*$y->[$klo] + $b*$y->[$khi]
-      +(($a*$a*$a-$a)*$y2->[$klo]
-	+($b*$b*$b-$b)*$y2->[$khi])*($h*$h)/6.0;
-}
-
-sub binsearch { # binary search routine finds index just below value
-  my ($x,$v)=@_;
-  my ($klo,$khi)=(0,$#{$x});
-  my $k;
-  while (($khi-$klo)>1) {
-    $k=int(($khi+$klo)/2);
-    if ($x->[$k]>$v) { $khi=$k; } else { $klo=$k; }
-  }
-  return $klo;
-}
-
-sub linsearch { # more efficient if repetatively doint it
-  my ($x,$v,$khi)=@_; $khi+=1;
-  my $n=$#{$x};
-  while($v>$x->[$khi] and $khi<$n) { $khi++; }
-  $_[2]=$khi-1;
-}
-
-1;
-
