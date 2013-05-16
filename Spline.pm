@@ -6,6 +6,7 @@ use Exporter 'import';
 #require Exporter;
 #@ISA=qw(Exporter);
 our @EXPORT_OK=qw(linsearch binsearch spline);
+our $VERSION = 0.02;
 use Carp;
 use Math::Derivative qw(Derivative2);
 

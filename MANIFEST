@@ -4,3 +4,4 @@ Release
 Makefile.PL
 Spline.pm
 t/00-load.t
+t/01-work.t
