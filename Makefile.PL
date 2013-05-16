@@ -1,12 +1,10 @@
 use ExtUtils::MakeMaker;
 use Config;
 
-$Version = '0.01';
-
 WriteMakefile(
                'NAME'     => 'Math::Spline',
                'LINKTYPE' => '$(INST_PM)',
-               'VERSION'  => $Version,
+               'VERSION_FROM' => 'Spline.pm',
                'dist'     => { SUFFIX => 'gz', COMPRESS => 'gzip -f' },
                'clean' 	  => {'FILES' => '*~'},
 );
